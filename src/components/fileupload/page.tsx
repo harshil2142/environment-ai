@@ -84,14 +84,12 @@ export default function FileUpload(props: any) {
                 props.setPdfNameArr((pre: any) => {
                   return [...pre, fileUrl];
                 });
-                props.setPdfDataUrl(fileUrl);
-                const res = await postRequest({
-                  url: "/history/get-summury",
-                  data: { pdfUrl: fileUrl },
-                });
-                if (res?.data?.success) {
-                  props.resetStateHndler();
-                  props.setSummaryState(res?.data?.summury);
+                if(props.pdfNameArr?.length === (props.totalFiles?.length - 1)){
+                  const res = await postRequest({
+                    url: "/history/get-summury",
+                    data: { pdfUrl: fileUrl },
+                  });
+                  props.updatePdfName(res?.data?.pdf_name)
                 }
                 return form.setValue("imageUrl", fileUrl);
               }}

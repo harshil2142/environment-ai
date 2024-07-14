@@ -44,16 +44,12 @@ const App: React.FC = () => {
   }
 
   const [pdfDataUrl, setPdfDataUrl] = useState<string[] | null>(null);
+  const [pdfName, setPdfName] = useState<any>(null);
   const [pdfNamArr, setPdfNameArr] = useState<string[]>([]);
   const [totalFiles, setTotalFiles] = useState<number>(0);
   const [summaryState, setSummaryState] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState<any>("");
-  const [pageLoading, setPageLoading] = useState<any>({
-    loading: false,
-    index: 0,
-  });
-  const [page, setPage] = useState(0);
   const [promptListState, setPromptListState] = useState<any>([]);
   const [historyState, setHistoryState] = useState<any>([]);
   const [activeHistory, setActiveHistory] = useState<any>(undefined);
@@ -63,19 +59,29 @@ const App: React.FC = () => {
 
   // const url = useMemo(() => getS3File(pdfDataUrl!), [pdfDataUrl]);
 
-  const fetchHistory = async () => {
+  const fetchPdfName = async () => {
     const response: any = await getRequest({
-      url: "/history/get",
-      params: { userId, page: 1, size: 7 },
+      url: "/pdf/get",
     });
+    setPdfName(response?.data?.pdf_name);
     setHistoryState(response?.data?.data);
     const length = response?.data?.data?.length;
     setActiveHistory(response?.data?.data[length - 1]);
   };
 
+  const updatePdfName = async (name?:string) => {
+    const response: any = await patchRequest({
+      url: "/pdf/update",
+      data: {
+        pdf_name:name || pdfName,
+      },
+    });
+    setPdfName(response?.data?.pdf_name);
+  };
+
   useEffect(() => {
     if (userId) {
-      fetchHistory();
+      fetchPdfName();
     }
   }, [userId]);
 
@@ -129,7 +135,6 @@ const App: React.FC = () => {
     const isEnterKey = name === "key" && e.key === "Enter" && e.target.value;
     const isClickEvent = name === "click" && text;
     if (isEnterKey || isClickEvent) {
-      setPage(0);
       setLoading(true);
       if (promptListState?.length === 0) {
         try {
@@ -143,7 +148,7 @@ const App: React.FC = () => {
             },
           });
           if (response?.data) {
-            fetchHistory();
+            fetchPdfName();
             setPromptListState(response?.data?.history?.history);
             setActiveHistory(response?.data?.history?.history[0]);
             setText("");
@@ -164,7 +169,7 @@ const App: React.FC = () => {
             },
           });
           if (response?.data) {
-            fetchHistory();
+            fetchPdfName();
             setText("");
             setPromptListState(response?.data?.history?.history);
           }
@@ -173,34 +178,6 @@ const App: React.FC = () => {
           setLoading(false);
         }
       }
-    }
-  };
-
-  const pageNoApiCall = async (response: any, pdfName: any, index: number) => {
-    setPageLoading({
-      loading: true,
-      index: index,
-    });
-    try {
-      const res: any = await postRequest({
-        url: "/history/get-pageno",
-        data: {
-          pdfUrl: pdfName,
-          response,
-        },
-      });
-      if (res?.data) {
-        setPage(res?.data?.pageNo);
-      }
-      setPageLoading({
-        loading: false,
-        index: 0,
-      });
-    } catch (error) {
-      setPageLoading({
-        loading: false,
-        index: 0,
-      });
     }
   };
 
@@ -226,76 +203,6 @@ const App: React.FC = () => {
           {/* <ResizablePanelGroup direction="horizontal"> */}
           {/* <ResizablePanel defaultSize={60}> */}
           <div className={` ${isAdmin ? "w-[60%]" : "w-full"} flex`}>
-            {/* <div className="w-[30%] p-4 pr-0 border-r-2 border-[#ECEFF3] h-screen bg-white flex flex-col justify-between">
-                  <div>
-                    <div>
-                      <Image
-                        src={Logo}
-                        alt="image"
-                        height={"100"}
-                        width={"100"}
-                      />
-                    </div>
-                    <div>
-                      <Button
-                        className="mt-4 w-[90%] me-4 text-start"
-                        onClick={() => {
-                          resetStateHndler();
-                          setPdfDataUrl("");
-                          setSummaryState("");
-                        }}
-                      >
-                        <div className="flex justify-start items-center">
-                          <i className="ri-add-line text-white mx-3"></i>
-                          Start New Chat
-                        </div>
-                      </Button>
-                    </div>
-                    <div className="text-[#808897] text-sm mt-3 flex items-center">
-                      RECENT CHATS <hr className="ms-[2%] w-[40%]" />
-                    </div>
-                    <div className="overflow-y-auto h-[50vh]">
-                      {historyState?.map((item: any, index: number) => (
-                        <div
-                          key={index}
-                          className="w-[90%] border-2 border-gray-300 rounded-xl h-10 mt-3 flex justify-center hover:bg-slate-50 items-center cursor-pointer bg-[#DFE1E6] text-black truncate"
-                          title={
-                            Array.isArray(historyState) &&
-                            historyState.length > 0 &&
-                            (historyState[index]?.history[0]?.pdfName || "")
-                          }
-                          onClick={() => {
-                            setHistoryHndler(index);
-                          }}
-                        >
-                          <span className="mx-2">
-                            {" "}
-                            {Array.isArray(historyState) &&
-                              historyState.length > 0 &&
-                              (historyState[index]?.history[0]?.pdfName || "")}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
-                      <i className="ri-upload-2-line text-[#666D80] me-3 text-lg"></i>
-                      Upgrade to plus
-                    </div>
-                    <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
-                      <i className="ri-settings-5-line text-[#666D80] me-3 text-lg"></i>
-                      Setting
-                    </div>
-                    <div
-                      className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2"
-                      onClick={logoutHndler}
-                    >
-                      <i className="ri-logout-box-r-line text-[#666D80] me-3 text-lg"></i>
-                      Logout
-                    </div>
-                  </div>
-                </div> */}
             <div className="w-full p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen ">
               <div>
                 <div className="flex mb-3 justify-between items-center ">
@@ -314,12 +221,6 @@ const App: React.FC = () => {
                   ref={chatContainerRef}
                   className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto bg-[url('../../public/bg_img.jpg')] opacity-25 bg-no-repeat`}
                 >
-                  {/* {summaryState && <div className="mb-4">
-                        <div className="mb-3 font-bold">Summary : </div>
-                        <div>
-                        {summaryState}
-                        </div>
-                      </div>} */}
                   {(promptListState || [])?.map((item: any, index: any) => (
                     <>
                       <div className="flex flex-col">
@@ -357,10 +258,10 @@ const App: React.FC = () => {
                           </div>
                           <div className="flex flex-col ms-2 w-[90%]">
                             <div className="text-lg">
-                              Design Verification AI
+                              Environment AI
                             </div>
                             <div className="text-sm text-[#666D80] my-2">
-                              @designai
+                              @environment-ai
                             </div>
                             <div className="text-base text-[#666D80] mb-2">
                               {item?.response}
@@ -374,21 +275,7 @@ const App: React.FC = () => {
                                 className="ri-clipboard-line text-base cursor-pointer"
                               ></i>
 
-                              {pageLoading.loading &&
-                              pageLoading.index === index ? (
-                                <Loader className="ms-2" />
-                              ) : (
-                                <i
-                                  onClick={() =>
-                                    pageNoApiCall(
-                                      item?.response,
-                                      item?.pdfName,
-                                      index
-                                    )
-                                  }
-                                  className="ri-pages-line text-base cursor-pointer ms-2"
-                                ></i>
-                              )}
+                             
                             </div>
                           </div>
                         </div>
@@ -453,6 +340,7 @@ const App: React.FC = () => {
                     setPdfNameArr={setPdfNameArr}
                     handleAddFile={handleAddFile}
                     totalFiles={totalFiles}
+                    updatePdfName={updatePdfName}
                   />
                 </div>
               </div>
