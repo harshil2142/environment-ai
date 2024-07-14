@@ -69,14 +69,15 @@ const App: React.FC = () => {
     setActiveHistory(response?.data?.data[length - 1]);
   };
 
-  const updatePdfName = async (name?:string) => {
+  const updatePdfName = async (name?: string) => {
     const response: any = await patchRequest({
       url: "/pdf/update",
       data: {
-        pdf_name:name || pdfName,
+        pdf_name: name || pdfName,
       },
     });
     setPdfName(response?.data?.pdf_name);
+    console.log(response?.data?.pdf_name);
   };
 
   useEffect(() => {
@@ -86,18 +87,17 @@ const App: React.FC = () => {
   }, [userId]);
 
   useEffect(() => {
-    const func = async() => {
-      if((totalFiles === pdfNameArr.length) && pdfNameArr.length > 0){
+    const func = async () => {
+      if (totalFiles === pdfNameArr.length && pdfNameArr.length > 0) {
         const res = await postRequest({
           url: "/history/get-summury",
           data: { pdfUrl: pdfNameArr },
         });
-        updatePdfName(res?.data?.pdf_name)
+        updatePdfName(res?.data?.pdf_name);
       }
-    }
-    func()
-  }, [totalFiles,pdfNameArr])
-  
+    };
+    func();
+  }, [totalFiles, pdfNameArr]);
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -268,9 +268,7 @@ const App: React.FC = () => {
                             />
                           </div>
                           <div className="flex flex-col ms-2 w-[90%]">
-                            <div className="text-lg">
-                              Environment AI
-                            </div>
+                            <div className="text-lg">Environment AI</div>
                             <div className="text-sm text-[#666D80] my-2">
                               @environment-ai
                             </div>
@@ -285,8 +283,6 @@ const App: React.FC = () => {
                                 }}
                                 className="ri-clipboard-line text-base cursor-pointer"
                               ></i>
-
-                             
                             </div>
                           </div>
                         </div>
