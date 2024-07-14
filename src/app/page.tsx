@@ -339,6 +339,7 @@ const App: React.FC = () => {
                     resetStateHndler={resetStateHndler}
                     setPdfNameArr={setPdfNameArr}
                     handleAddFile={handleAddFile}
+                    setTotalFiles={setTotalFiles}
                     totalFiles={totalFiles}
                     updatePdfName={updatePdfName}
                   />
