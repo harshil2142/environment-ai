@@ -44,6 +44,7 @@ export default function FileUpload(props: any) {
                 basename: any;
                 extension: any;
               }) => {
+                console.log(basename, extension);
                 const timestamp = new Date().getTime();
                 const baseStripped = stripSpecialCharacters(basename);
                 const filename = `${baseStripped}${extension}`;
@@ -69,6 +70,7 @@ export default function FileUpload(props: any) {
                     );
                   });
                 });
+                props.setTotalFiles((pre: any) => Math.max(pre - 1, 0));
                 props.setPdfDataUrl(null);
                 return form.setValue("imageUrl", name);
               }}
