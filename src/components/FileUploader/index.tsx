@@ -30,6 +30,7 @@ const Index: React.FC<IndexProps> = ({
   maxFileSize,
   onRemoveComplete,
   onUploadComplete,
+  handleAddFile,
   ...props
 }) => {
   if (typeof registerPlugin === "function") {
@@ -119,6 +120,7 @@ const Index: React.FC<IndexProps> = ({
   return (
     <>
       <FilePond
+        allowMultiple
         allowProcess
         {...props}
         ref={forwardRef || ref}
@@ -128,6 +130,7 @@ const Index: React.FC<IndexProps> = ({
         labelFileTypeNotAllowed="Invalid file format"
         maxFileSize={maxFileSize}
         onremovefile={serverRemove}
+        onaddfile={handleAddFile}
         server={{
           load: serverLoad,
           process: serverProcess,
@@ -163,6 +166,7 @@ interface IndexProps {
     extension: any;
   }) => any;
   onUploadComplete?: (data: { contentType: string; fileName: string }) => void;
+  handleAddFile?: (error: any, file: any) => void;
   ref?: LegacyRef<FilePond> | undefined;
 }
 

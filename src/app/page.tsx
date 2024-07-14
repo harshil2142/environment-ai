@@ -43,7 +43,9 @@ const App: React.FC = () => {
     redirect("/signin");
   }
 
-  const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+  const [pdfDataUrl, setPdfDataUrl] = useState<string[] | null>(null);
+  const [pdfNamArr, setPdfNameArr] = useState<string[]>([]);
+  const [totalFiles, setTotalFiles] = useState<number>(0);
   const [summaryState, setSummaryState] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState<any>("");
@@ -59,7 +61,7 @@ const App: React.FC = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const url = useMemo(() => getS3File(pdfDataUrl!), [pdfDataUrl]);
+  // const url = useMemo(() => getS3File(pdfDataUrl!), [pdfDataUrl]);
 
   const fetchHistory = async () => {
     const response: any = await getRequest({
@@ -208,14 +210,23 @@ const App: React.FC = () => {
     router.refresh();
   };
 
+  console.log(totalFiles);
+  console.log(pdfNamArr);
+
+  const handleAddFile = (error: any, file: any) => {
+    if (!error && file.fileExtension === "pdf") {
+      setTotalFiles((prev) => prev + 1);
+    }
+  };
+
   return (
     <>
       <div>
         <div className="flex">
           {/* <ResizablePanelGroup direction="horizontal"> */}
-            {/* <ResizablePanel defaultSize={60}> */}
-              <div className={` ${isAdmin ? "w-[60%]" : "w-full"} flex`}>
-                {/* <div className="w-[30%] p-4 pr-0 border-r-2 border-[#ECEFF3] h-screen bg-white flex flex-col justify-between">
+          {/* <ResizablePanel defaultSize={60}> */}
+          <div className={` ${isAdmin ? "w-[60%]" : "w-full"} flex`}>
+            {/* <div className="w-[30%] p-4 pr-0 border-r-2 border-[#ECEFF3] h-screen bg-white flex flex-col justify-between">
                   <div>
                     <div>
                       <Image
@@ -285,175 +296,178 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 </div> */}
-                <div  className="w-full p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen ">
-                  <div>
-                    <div className="flex mb-3 justify-between items-center ">
-                      <div className="text-xl font-bold">
-                        Environment Chat Board
-                      </div>
-                      <div
-                      className="w-[6rem] h-10 rounded-2xl flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2"
-                      onClick={logoutHndler}
-                    >
-                      <i className="ri-logout-box-r-line text-[#666D80] me-3 text-lg"></i>
-                      Logout
-                    </div>
-                    </div>
-                    <div
-                      ref={chatContainerRef}
-                      className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto bg-[url('../../public/bg_img.jpg')]`}
-                    >
-                      {/* {summaryState && <div className="mb-4">
+            <div className="w-full p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen ">
+              <div>
+                <div className="flex mb-3 justify-between items-center ">
+                  <div className="text-xl font-bold">
+                    Environment Chat Board
+                  </div>
+                  <div
+                    className="w-[6rem] h-10 rounded-2xl flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2"
+                    onClick={logoutHndler}
+                  >
+                    <i className="ri-logout-box-r-line text-[#666D80] me-3 text-lg"></i>
+                    Logout
+                  </div>
+                </div>
+                <div
+                  ref={chatContainerRef}
+                  className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto bg-[url('../../public/bg_img.jpg')] opacity-25 bg-no-repeat`}
+                >
+                  {/* {summaryState && <div className="mb-4">
                         <div className="mb-3 font-bold">Summary : </div>
                         <div>
                         {summaryState}
                         </div>
                       </div>} */}
-                      {(promptListState || [])?.map((item: any, index: any) => (
-                        <>
-                          <div className="flex flex-col">
-                            <div className="flex">
-                              <div>
-                                <Image
-                                  className="w-10 h-10 rounded-full"
-                                  src={Avatar}
-                                  width={40}
-                                  height={40}
-                                  alt="Rounded avatar"
-                                />
-                              </div>
-                              <div className="flex flex-col ms-2">
-                                <div className="text-lg">You</div>
-                                <div className="text-sm text-[#666D80] my-2">
-                                  @craiglevin
-                                </div>
-                                <div className="text-base text-[#666D80]">
-                                  {item?.prompt}
-                                </div>
-                              </div>
+                  {(promptListState || [])?.map((item: any, index: any) => (
+                    <>
+                      <div className="flex flex-col">
+                        <div className="flex">
+                          <div>
+                            <Image
+                              className="w-10 h-10 rounded-full"
+                              src={Avatar}
+                              width={40}
+                              height={40}
+                              alt="Rounded avatar"
+                            />
+                          </div>
+                          <div className="flex flex-col ms-2">
+                            <div className="text-lg">You</div>
+                            <div className="text-sm text-[#666D80] my-2">
+                              @craiglevin
+                            </div>
+                            <div className="text-base text-[#666D80]">
+                              {item?.prompt}
                             </div>
                           </div>
-                          <div className="flex flex-col my-6">
+                        </div>
+                      </div>
+                      <div className="flex flex-col my-6">
+                        <div className="flex">
+                          <div className="w-[7%]">
+                            <Image
+                              className="rounded-full"
+                              src={Chatgpt}
+                              width={40}
+                              height={400}
+                              alt="chatgpt"
+                            />
+                          </div>
+                          <div className="flex flex-col ms-2 w-[90%]">
+                            <div className="text-lg">
+                              Design Verification AI
+                            </div>
+                            <div className="text-sm text-[#666D80] my-2">
+                              @designai
+                            </div>
+                            <div className="text-base text-[#666D80] mb-2">
+                              {item?.response}
+                            </div>
                             <div className="flex">
-                              <div className="w-[7%]">
-                                <Image
-                                  className="rounded-full"
-                                  src={Chatgpt}
-                                  width={40}
-                                  height={400}
-                                  alt="chatgpt"
-                                />
-                              </div>
-                              <div className="flex flex-col ms-2 w-[90%]">
-                                <div className="text-lg">
-                                  Design Verification AI
-                                </div>
-                                <div className="text-sm text-[#666D80] my-2">
-                                  @designai
-                                </div>
-                                <div className="text-base text-[#666D80] mb-2">
-                                  {item?.response}
-                                </div>
-                                <div className="flex">
-                                  <i
-                                    onClick={() => {
-                                      navigator.clipboard.writeText(
-                                        item?.response
-                                      );
-                                      toast.success("text copied.");
-                                    }}
-                                    className="ri-clipboard-line text-base cursor-pointer"
-                                  ></i>
+                              <i
+                                onClick={() => {
+                                  navigator.clipboard.writeText(item?.response);
+                                  toast.success("text copied.");
+                                }}
+                                className="ri-clipboard-line text-base cursor-pointer"
+                              ></i>
 
-                                  {pageLoading.loading &&
-                                  pageLoading.index === index ? (
-                                    <Loader className="ms-2" />
-                                  ) : (
-                                    <i
-                                      onClick={() =>
-                                        pageNoApiCall(
-                                          item?.response,
-                                          item?.pdfName,
-                                          index
-                                        )
-                                      }
-                                      className="ri-pages-line text-base cursor-pointer ms-2"
-                                    ></i>
-                                  )}
-                                </div>
-                              </div>
+                              {pageLoading.loading &&
+                              pageLoading.index === index ? (
+                                <Loader className="ms-2" />
+                              ) : (
+                                <i
+                                  onClick={() =>
+                                    pageNoApiCall(
+                                      item?.response,
+                                      item?.pdfName,
+                                      index
+                                    )
+                                  }
+                                  className="ri-pages-line text-base cursor-pointer ms-2"
+                                ></i>
+                              )}
                             </div>
                           </div>
-                        </>
-                      ))}
-                      <div ref={bottomRef}></div>
-                    </div>
+                        </div>
+                      </div>
+                    </>
+                  ))}
+                  <div ref={bottomRef}></div>
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <div className="mt-2 mb-3 relative">
+                  <input
+                    type="text"
+                    value={text}
+                    onChange={(e: any) => setText(e.target.value)}
+                    className="w-full py-2 pl-4 pr-10 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm "
+                    placeholder="Message Environment AI..."
+                    onKeyDown={(event: any) => handleKeyDown(event, "key")}
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                    {loading ? (
+                      <Loader />
+                    ) : (
+                      <i
+                        className="ri-send-plane-fill w-5 h-5 text-gray-400"
+                        onClick={(event: any) => handleKeyDown("", "click")}
+                      ></i>
+                    )}
                   </div>
-                  <div className="flex flex-col">
-                    <div className="mt-2 mb-3 relative">
-                      <input
-                        type="text"
-                        value={text}
-                        onChange={(e: any) => setText(e.target.value)}
-                        className="w-full py-2 pl-4 pr-10 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm "
-                        placeholder="Message Environment AI..."
-                        onKeyDown={(event: any) => handleKeyDown(event, "key")}
-                      />
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
-                        {loading ? (
-                          <Loader />
-                        ) : (
-                          <i
-                            className="ri-send-plane-fill w-5 h-5 text-gray-400"
-                            onClick={(event: any) => handleKeyDown("", "click")}
-                          ></i>
-                        )}
-                      </div>
-                    </div>
-                    <div className="mb-3 text-[#666D80] ">
-                      Recommended Questions:
-                    </div>
-                    <div className="flex">
-                      <div className="px-3 py-2 me-2 text-sm hover:bg-slate-200 bg-[#D9D9D9] text-black rounded-xl cursor-pointer">
-                        Design style
-                      </div>
-                      <div className="px-3 py-2 me-2 text-sm bg-[#D9D9D9] hover:bg-slate-200 text-black rounded-xl cursor-pointer">
-                        Change furniture or color
-                      </div>
-                      <div className="px-3 py-2 text-sm bg-[#D9D9D9] hover:bg-slate-200 text-black rounded-xl cursor-pointer">
-                        Design uploaded picture
-                      </div>
-                    </div>
+                </div>
+                <div className="mb-3 text-[#666D80] ">
+                  Recommended Questions:
+                </div>
+                <div className="flex">
+                  <div className="px-3 py-2 me-2 text-sm hover:bg-slate-200 bg-[#D9D9D9] text-black rounded-xl cursor-pointer">
+                    Design style
+                  </div>
+                  <div className="px-3 py-2 me-2 text-sm bg-[#D9D9D9] hover:bg-slate-200 text-black rounded-xl cursor-pointer">
+                    Change furniture or color
+                  </div>
+                  <div className="px-3 py-2 text-sm bg-[#D9D9D9] hover:bg-slate-200 text-black rounded-xl cursor-pointer">
+                    Design uploaded picture
                   </div>
                 </div>
               </div>
-            {/* </ResizablePanel> */}
-            {/* <ResizableHandle withHandle /> */}
-            {/* <ResizablePanel defaultSize={40}> */}
-              {isAdmin && <div className="w-[40%] p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen">
-                <div className=" p-3 h-[20vh] bg-white rounded-2xl flex flex-col justify-center">
-                  {/* <div className="max-h-[25vh] overflow-y-auto text-base text-[#666D80]">
+            </div>
+          </div>
+          {/* </ResizablePanel> */}
+          {/* <ResizableHandle withHandle /> */}
+          {/* <ResizablePanel defaultSize={40}> */}
+          {isAdmin && (
+            <div className="w-[40%] p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen">
+              <div className=" p-3 h-[95vh] max-h-[95vh] bg-white rounded-2xl flex flex-col justify-center">
+                {/* <div className="max-h-[25vh] overflow-y-auto text-base text-[#666D80]">
                     {summaryState}
                   </div> */}
-                  <div className="flex justify-center">
-                    <FileUpload
-                      setSummaryState={setSummaryState}
-                      setPdfDataUrl={setPdfDataUrl}
-                      resetStateHndler={resetStateHndler}
-                    />
+                <div className="flex justify-center">
+                  <FileUpload
+                    setSummaryState={setSummaryState}
+                    setPdfDataUrl={setPdfDataUrl}
+                    resetStateHndler={resetStateHndler}
+                    setPdfNameArr={setPdfNameArr}
+                    handleAddFile={handleAddFile}
+                    totalFiles={totalFiles}
+                  />
+                </div>
+              </div>
+              {/* <div className="h-[80vh] mt-4 bg-white rounded-2xl flex flex-col"> */}
+              {/* {pdfDataUrl ? (
+                  <PdfViewer url={url} initialPage={page} />
+                ) : (
+                  <div className="text-3xl flex justify-center items-center h-full text-blue-500 font-semibold cursor-pointer hover:underline">
+                    {`Let's go! Upload your PDF file now.`}
                   </div>
-                </div>
-                <div className="h-[80vh] mt-4 bg-white rounded-2xl flex flex-col">
-                  {pdfDataUrl ? (
-                    <PdfViewer url={url} initialPage={page} />
-                  ) : (
-                    <div className="text-3xl flex justify-center items-center h-full text-blue-500 font-semibold cursor-pointer hover:underline">
-                      {`Let's go! Upload your PDF file now.`}
-                    </div>
-                  )}
-                </div>
-              </div>}
-            {/* </ResizablePanel> */}
+                )} */}
+              {/* </div> */}
+            </div>
+          )}
+          {/* </ResizablePanel> */}
           {/* </ResizablePanelGroup> */}
         </div>
       </div>

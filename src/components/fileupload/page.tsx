@@ -57,6 +57,18 @@ export default function FileUpload(props: any) {
               onRemoveComplete={({ name }: { name: any }) => {
                 // Clear the image preview URL when removing the image
                 // setImagePreviewUrl(null);
+                console.log("name", name);
+                props.setPdfNameArr((pre: any) => {
+                  return pre.filter((item: any) => {
+                    return (
+                      item !==
+                      generateS3FileUrl({
+                        s3BucketName: process.env.NEXT_PUBLIC_AWS_S3_BUCKET!,
+                        s3KeyName: name,
+                      })
+                    );
+                  });
+                });
                 props.setPdfDataUrl(null);
                 return form.setValue("imageUrl", name);
               }}
@@ -65,9 +77,13 @@ export default function FileUpload(props: any) {
                   s3BucketName: process.env.NEXT_PUBLIC_AWS_S3_BUCKET!,
                   s3KeyName: fileName,
                 });
+                console.log("fileUrl", fileUrl);
                 // Update the image preview URL
                 // setImagePreviewUrl(fileUrl);
                 // Set the image URL in the form
+                props.setPdfNameArr((pre: any) => {
+                  return [...pre, fileUrl];
+                });
                 props.setPdfDataUrl(fileUrl);
                 const res = await postRequest({
                   url: "/history/get-summury",
@@ -79,6 +95,7 @@ export default function FileUpload(props: any) {
                 }
                 return form.setValue("imageUrl", fileUrl);
               }}
+              handleAddFile={props.handleAddFile}
             />
           </div>
         </form>
