@@ -6,6 +6,7 @@ import "remixicon/fonts/remixicon.css";
 import Logo from "/public/logo.png";
 import Avatar from "/public/avatar.png";
 import Chatgpt from "/public/chatgpt.png";
+import BGIMG from "../../public/bg_img.jpg";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -35,6 +36,7 @@ const App: React.FC = () => {
   const cookies = new Cookies();
   const userId = cookies.get("userId");
   const token = cookies.get("token");
+  const isAdmin = Boolean(cookies.get("admin"));
   const router = useRouter();
 
   if (!token) {
@@ -212,7 +214,7 @@ const App: React.FC = () => {
         <div className="flex">
           {/* <ResizablePanelGroup direction="horizontal"> */}
             {/* <ResizablePanel defaultSize={60}> */}
-              <div className="w-[60%] flex">
+              <div className={` ${isAdmin ? "w-[60%]" : "w-full"} flex`}>
                 {/* <div className="w-[30%] p-4 pr-0 border-r-2 border-[#ECEFF3] h-screen bg-white flex flex-col justify-between">
                   <div>
                     <div>
@@ -283,26 +285,30 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 </div> */}
-                <div className="w-full p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen ">
+                <div  className="w-full p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen ">
                   <div>
                     <div className="flex mb-3 justify-between items-center ">
                       <div className="text-xl font-bold">
-                        Design Verification Chat Board
+                        Environment Chat Board
                       </div>
-                      <div>
-                        <i className="ri-upload-2-line text-lg cursor-pointer"></i>
-                      </div>
+                      <div
+                      className="w-[6rem] h-10 rounded-2xl flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2"
+                      onClick={logoutHndler}
+                    >
+                      <i className="ri-logout-box-r-line text-[#666D80] me-3 text-lg"></i>
+                      Logout
+                    </div>
                     </div>
                     <div
                       ref={chatContainerRef}
-                      className="my-3 p-3 h-[70vh] bg-white rounded-2xl flex flex-col overflow-y-auto"
+                      className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto bg-[url('../../public/bg_img.jpg')]`}
                     >
-                      {summaryState && <div className="mb-4">
+                      {/* {summaryState && <div className="mb-4">
                         <div className="mb-3 font-bold">Summary : </div>
                         <div>
                         {summaryState}
                         </div>
-                      </div>}
+                      </div>} */}
                       {(promptListState || [])?.map((item: any, index: any) => (
                         <>
                           <div className="flex flex-col">
@@ -390,7 +396,7 @@ const App: React.FC = () => {
                         value={text}
                         onChange={(e: any) => setText(e.target.value)}
                         className="w-full py-2 pl-4 pr-10 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm "
-                        placeholder="Message Design Verification AI..."
+                        placeholder="Message Environment AI..."
                         onKeyDown={(event: any) => handleKeyDown(event, "key")}
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
@@ -424,7 +430,7 @@ const App: React.FC = () => {
             {/* </ResizablePanel> */}
             {/* <ResizableHandle withHandle /> */}
             {/* <ResizablePanel defaultSize={40}> */}
-              <div className="w-[40%] p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen">
+              {isAdmin && <div className="w-[40%] p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen">
                 <div className=" p-3 h-[20vh] bg-white rounded-2xl flex flex-col justify-center">
                   {/* <div className="max-h-[25vh] overflow-y-auto text-base text-[#666D80]">
                     {summaryState}
@@ -446,7 +452,7 @@ const App: React.FC = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div>}
             {/* </ResizablePanel> */}
           {/* </ResizablePanelGroup> */}
         </div>
