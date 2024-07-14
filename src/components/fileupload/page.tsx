@@ -23,11 +23,11 @@ export default function FileUpload(props: any) {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("heloo jay");
+    // console.log("heloo jay");
     const payload = {
       imageUrl: data.imageUrl,
     };
-    console.log(payload);
+    // console.log(payload);
   }
 
   return (
@@ -44,7 +44,7 @@ export default function FileUpload(props: any) {
                 basename: any;
                 extension: any;
               }) => {
-                console.log(basename, extension);
+                // console.log(basename, extension);
                 const timestamp = new Date().getTime();
                 const baseStripped = stripSpecialCharacters(basename);
                 const filename = `${baseStripped}${extension}`;
@@ -58,7 +58,7 @@ export default function FileUpload(props: any) {
               onRemoveComplete={({ name }: { name: any }) => {
                 // Clear the image preview URL when removing the image
                 // setImagePreviewUrl(null);
-                console.log("name", name);
+                // console.log("name", name);
                 props.setPdfNameArr((pre: any) => {
                   return pre.filter((item: any) => {
                     return (
@@ -79,19 +79,23 @@ export default function FileUpload(props: any) {
                   s3BucketName: process.env.NEXT_PUBLIC_AWS_S3_BUCKET!,
                   s3KeyName: fileName,
                 });
-                console.log("fileUrl", fileUrl);
+                
                 // Update the image preview URL
                 // setImagePreviewUrl(fileUrl);
                 // Set the image URL in the form
                 props.setPdfNameArr((pre: any) => {
                   return [...pre, fileUrl];
                 });
-                if(props.pdfNameArr?.length === (props.totalFiles?.length - 1)){
-                  const res = await postRequest({
-                    url: "/history/get-summury",
-                    data: { pdfUrl: fileUrl },
-                  });
-                  props.updatePdfName(res?.data?.pdf_name)
+                // console.log(props.pdfNameArr?.length ,"total");
+                // console.log((props.totalFiles - 1),"total");
+                if(props.pdfNameArr?.length === (props.totalFiles - 1)){
+                  const updatedArr = [...props.pdfNameArr, fileUrl];
+                  // console.log(props.totalFiles,"totalFiles")
+                  // const res = await postRequest({
+                  //   url: "/history/get-summury",
+                  //   data: { pdfUrl: updatedArr },
+                  // });
+                  // props.updatePdfName(res?.data?.pdf_name)
                 }
                 return form.setValue("imageUrl", fileUrl);
               }}

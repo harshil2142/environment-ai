@@ -45,7 +45,7 @@ const App: React.FC = () => {
 
   const [pdfDataUrl, setPdfDataUrl] = useState<string[] | null>(null);
   const [pdfName, setPdfName] = useState<any>(null);
-  const [pdfNamArr, setPdfNameArr] = useState<string[]>([]);
+  const [pdfNameArr, setPdfNameArr] = useState<string[]>([]);
   const [totalFiles, setTotalFiles] = useState<number>(0);
   const [summaryState, setSummaryState] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -84,6 +84,20 @@ const App: React.FC = () => {
       fetchPdfName();
     }
   }, [userId]);
+
+  useEffect(() => {
+    const func = async() => {
+      if((totalFiles === pdfNameArr.length) && pdfNameArr.length > 0){
+        const res = await postRequest({
+          url: "/history/get-summury",
+          data: { pdfUrl: pdfNameArr },
+        });
+        updatePdfName(res?.data?.pdf_name)
+      }
+    }
+    func()
+  }, [totalFiles,pdfNameArr])
+  
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -186,9 +200,6 @@ const App: React.FC = () => {
     cookies.remove("userId");
     router.refresh();
   };
-
-  console.log(totalFiles);
-  console.log(pdfNamArr);
 
   const handleAddFile = (error: any, file: any) => {
     if (!error && file.fileExtension === "pdf") {
@@ -341,6 +352,7 @@ const App: React.FC = () => {
                     handleAddFile={handleAddFile}
                     setTotalFiles={setTotalFiles}
                     totalFiles={totalFiles}
+                    pdfNameArr={pdfNameArr}
                     updatePdfName={updatePdfName}
                   />
                 </div>
