@@ -1,0 +1,46 @@
+/* .filepond--image-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url("public/banner-featured.png");
+} */
+
+.filepond--image-preview::after {
+  content: '';
+  width: 200px;
+  height: 50px;
+  /* background-image: url('./banner-featured.png'); */
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.filepond--root{
+  margin-bottom: 0;
+}
+
+/* .filepond--image-preview-overlay.filepond--image-preview-overlay-idle::after {
+  content: "";
+  width: 200px;
+  height: 100px;
+  background-image: url("./banner-featured.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.filepond--image-preview-overlay.filepond--image-preview-overlay-idle {
+  opacity: 1;
+} */
+
+.filepond--file-info {
+  /* display: none; */
+}
+
+.filepond--root .filepond--credits[style] {
+  visibility: hidden;
+}
