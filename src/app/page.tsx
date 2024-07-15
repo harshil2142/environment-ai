@@ -163,7 +163,8 @@ const App: React.FC = () => {
           if (response?.data) {
             fetchPdfName();
             setPromptListState(response?.data?.history?.history);
-            setActiveHistory(response?.data?.history?.history[0]);
+            console.log(response?.data?.history?.history[0]);
+            setActiveHistory(response?.data?.history);
             setText("");
           }
           setLoading(false);
@@ -228,7 +229,7 @@ const App: React.FC = () => {
                 </div>
                 <div
                   ref={chatContainerRef}
-                  className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto bg-[url('../../public/bg_img.jpg')] opacity-25 bg-no-repeat`}
+                  className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto`}
                 >
                   {(promptListState || [])?.map((item: any, index: any) => (
                     <>
