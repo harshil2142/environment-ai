@@ -48,7 +48,7 @@ export async function getRequest({
   return response;
  }
   catch (error:any) {
-    toast.error(error?.response?.data?.message)
+    toast.error(error?.response?.data?.response || error?.response?.data?.message)
     throw new Error(`${error}`);
   }
 }
@@ -70,7 +70,7 @@ export async function postRequest({
     });
     return response;
   } catch (error:any) {
-    toast.error(error?.response?.data?.message)
+    toast.error(error?.response?.data?.response || error?.response?.data?.message)
     throw new Error(`${error}`);
   }
 }
@@ -92,7 +92,7 @@ export async function patchRequest({
     });
     return response;
   } catch (error:any) {
-    toast.error(error?.response?.data?.message)
+    toast.error(error?.response?.data?.response || error?.response?.data?.message)
     throw new Error(`${error}`);
   }
 }

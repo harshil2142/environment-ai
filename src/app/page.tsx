@@ -155,9 +155,8 @@ const App: React.FC = () => {
           const response: any = await postRequest({
             url: "/history/create",
             data: {
-              summary: summaryState,
               userId: userId,
-              pdfUrl: pdfDataUrl,
+              pdfUrl: pdfName,
               prompt: e.target.value || text,
             },
           });
@@ -177,8 +176,7 @@ const App: React.FC = () => {
             url: "/history/update",
             data: {
               historyId: activeHistory?._id,
-              // chatHistory: [],
-              chatHistory: promptListState?.slice(-1),
+              pdfUrl: pdfName,
               prompt: e.target.value || text,
             },
           });
@@ -261,7 +259,7 @@ const App: React.FC = () => {
                           <div className="w-[7%]">
                             <Image
                               className="rounded-full"
-                              src={Chatgpt}
+                              src={BGIMG}
                               width={40}
                               height={400}
                               alt="chatgpt"
@@ -349,7 +347,6 @@ const App: React.FC = () => {
                     setTotalFiles={setTotalFiles}
                     totalFiles={totalFiles}
                     pdfNameArr={pdfNameArr}
-                    updatePdfName={updatePdfName}
                   />
                 </div>
               </div>
