@@ -5,7 +5,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   images: {
-    domains: ["designverification.ai"],
+    domains: ["designverification.ai","lirp.cdn-website.com"],
   },
 };
 

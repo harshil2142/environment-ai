@@ -43,7 +43,7 @@ export default function RootLayout({
   //   }
   // }, [pathName]);
 
-  if (!token && pathName !== "/signin" && pathName !== "/signup") {
+  if (!token && pathName !== "/signin" && pathName !== "/signup" && pathName !== "/markdown") {
     redirect("/signin");
   }
 

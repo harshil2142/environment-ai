@@ -84,7 +84,7 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background-color: #666D80; /* Color of the scrollbar handle */
+    background-color: #097E4D; /* Color of the scrollbar handle */
     border-radius: 10px; /* Roundness of the scrollbar handle */
     border: 3px solid #f1f1f1; /* Creates padding around the handle */
   }
