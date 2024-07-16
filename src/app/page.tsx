@@ -163,7 +163,6 @@ const App: React.FC = () => {
           if (response?.data) {
             fetchPdfName();
             setPromptListState(response?.data?.history?.history);
-            console.log(response?.data?.history?.history[0]);
             setActiveHistory(response?.data?.history);
             setText("");
           }
