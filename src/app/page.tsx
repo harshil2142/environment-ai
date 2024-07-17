@@ -192,7 +192,7 @@ const App: React.FC = () => {
       }
     }
   };
-
+  console.log(promptListState, "state")
   const logoutHndler = () => {
     cookies.remove("token");
     cookies.remove("userId");
@@ -211,28 +211,96 @@ const App: React.FC = () => {
         <div className="flex">
           {/* <ResizablePanelGroup direction="horizontal"> */}
           {/* <ResizablePanel defaultSize={60}> */}
-          <div className={` ${isAdmin ? "w-[60%]" : "w-full"} flex`}>
+          <div className="w-[15%] p-4 pr-0 border-r-2 border-[#ECEFF3] h-screen bg-white flex flex-col justify-between">
+            <div>
+              <div>
+                <Image
+                  src={"https://lirp.cdn-website.com/3f447af7/import/clib/ecowb_org/dms3rep/multi/opt/XLarge-Logo-20e48cb7-469x154-1920w.png"}
+                  alt="image"
+                  height={"100"}
+                  width={"100"}
+                />
+              </div>
+              <div>
+                <Button
+                  className="mt-4 w-[90%] me-4 text-start bg-[#097E4D] hover:bg-[#81b59f]"
+                  onClick={() => {
+                    resetStateHndler();
+                    setSummaryState("");
+                  }}
+                >
+                  <div className="flex justify-start items-center">
+                    <i className="ri-add-line text-white mx-3"></i>
+                    Start New Chat
+                  </div>
+                </Button>
+              </div>
+              <div className="text-[#808897] text-sm mt-3 flex items-center">
+                RECENT CHATS <hr className="ms-[2%] w-[40%]" />
+              </div>
+              <div className="overflow-y-auto h-[50vh]">
+                {historyState?.map((item: any, index: number) => (
+                  <div
+                    key={index}
+                    className="w-[90%] border-2 border-gray-300 rounded-xl h-10 mt-3 flex justify-center hover:bg-slate-50 items-center cursor-pointer bg-[#DFE1E6] text-black truncate"
+                    title={
+                      Array.isArray(historyState) &&
+                      historyState.length > 0 &&
+                      (historyState[index]?.history[0]?.pdfName || "")
+                    }
+                    onClick={() => {
+                      setHistoryHndler(index);
+                    }}
+                  >
+                    {/* {item?.summary} */}
+                    <span className="mx-2">
+                      {" "}
+                      {Array.isArray(historyState) &&
+                        historyState.length > 0 &&
+                        (historyState[index]?.history[0]?.pdfName || "")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div>
+              {/* <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
+                      <i className="ri-delete-bin-line text-[#666D80] me-3 text-lg"></i>
+                      Clear all conversations
+                    </div> */}
+              <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
+                <i className="ri-upload-2-line text-[#666D80] me-3 text-lg"></i>
+                Upgrade to plus
+              </div>
+              <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
+                <i className="ri-settings-5-line text-[#666D80] me-3 text-lg"></i>
+                Setting
+              </div>
+              <div
+                className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2"
+                onClick={logoutHndler}
+              >
+                <i className="ri-logout-box-r-line text-[#666D80] me-3 text-lg"></i>
+                Logout
+              </div>
+            </div>
+          </div>
+          <div className={` ${isAdmin ? "w-[65%]" : "w-[85%]"} flex`}>
             <div className="w-full p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen ">
               <div>
                 <div className="flex mb-3 justify-between items-center ">
                   <div className="text-xl font-bold">
-                    Environment Chat Board
+                    Ecologistics without Boarders
                   </div>
-                  <div
-                    className="w-[6rem] h-10 rounded-2xl flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2"
-                    onClick={logoutHndler}
-                  >
-                    <i className="ri-logout-box-r-line text-[#666D80] me-3 text-lg"></i>
-                    Logout
-                  </div>
+                 
                 </div>
                 <div
                   ref={chatContainerRef}
-                  className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto`}
+                  className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto `}
                 >
                   {(promptListState || [])?.map((item: any, index: any) => (
                     <>
-                      <div className="flex flex-col">
+                      <div className="flex flex-col relative z-10">
                         <div className="flex">
                           <div>
                             <Image
@@ -245,10 +313,10 @@ const App: React.FC = () => {
                           </div>
                           <div className="flex flex-col ms-2">
                             <div className="text-lg">You</div>
-                            <div className="text-sm text-[#666D80] my-2">
+                            <div className="text-sm text-black my-2">
                               @craiglevin
                             </div>
-                            <div className="text-base text-[#666D80]">
+                            <div className="text-base text-black">
                               {item?.prompt}
                             </div>
                           </div>
@@ -258,19 +326,19 @@ const App: React.FC = () => {
                         <div className="flex">
                           <div className="w-[7%]">
                             <Image
-                              className="rounded-full"
+                              className="w-10 h-10 rounded-full"
                               src={BGIMG}
                               width={40}
-                              height={400}
+                              height={40}
                               alt="chatgpt"
                             />
                           </div>
                           <div className="flex flex-col ms-2 w-[90%]">
                             <div className="text-lg">Environment AI</div>
-                            <div className="text-sm text-[#666D80] my-2">
+                            <div className="text-sm text-black my-2">
                               @environment-ai
                             </div>
-                            <div className="text-base text-[#666D80] mb-2">
+                            <div className="text-base text-black mb-2">
                               {item?.response}
                             </div>
                             <div className="flex">
@@ -311,7 +379,7 @@ const App: React.FC = () => {
                     )}
                   </div>
                 </div>
-                <div className="mb-3 text-[#666D80] ">
+                <div className="mb-3 text-black ">
                   Recommended Questions:
                 </div>
                 <div className="flex">
@@ -332,12 +400,12 @@ const App: React.FC = () => {
           {/* <ResizableHandle withHandle /> */}
           {/* <ResizablePanel defaultSize={40}> */}
           {isAdmin && (
-            <div className="w-[40%] p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen">
-              <div className=" p-3 h-[95vh] max-h-[95vh] bg-white rounded-2xl flex flex-col justify-center">
-                {/* <div className="max-h-[25vh] overflow-y-auto text-base text-[#666D80]">
+            <div className="w-[30%] p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen">
+              <div className=" p-3 h-[95vh] max-h-[95vh] bg-[#7ca091] rounded-2xl flex flex-col justify-center">
+                {/* <div className="max-h-[25vh] overflow-y-auto text-base text-black">
                     {summaryState}
                   </div> */}
-                <div className="flex justify-center">
+                <div className="flex justify-center"> 
                   <FileUpload
                     setSummaryState={setSummaryState}
                     setPdfDataUrl={setPdfDataUrl}
