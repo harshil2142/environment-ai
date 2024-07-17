@@ -43,9 +43,9 @@ export default function RootLayout({
   //   }
   // }, [pathName]);
 
-  if (!token && pathName !== "/signin" && pathName !== "/signup") {
-    redirect("/signin");
-  }
+  // if (!token && pathName !== "/signin" && pathName !== "/signup") {
+  //   redirect("/signin");
+  // }
 
   return (
     <html lang="en">
