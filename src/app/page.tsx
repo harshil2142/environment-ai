@@ -25,6 +25,7 @@ import Cookies from "universal-cookie";
 import getS3File from "@/constants/get-aws-url";
 import { redirect, useRouter } from "next/navigation";
 import Loader from "@/components/Loader/loader";
+import MarkdownViewer from "@/components/MarkdownViewer";
 
 const dropzoneStyle: React.CSSProperties = {
   border: "2px dashed #ccc",
@@ -339,7 +340,7 @@ const App: React.FC = () => {
                               @environment-ai
                             </div>
                             <div className="text-base text-black mb-2">
-                              {item?.response}
+                            <MarkdownViewer content={item?.response} />
                             </div>
                             <div className="flex">
                               <i
