@@ -103,3 +103,10 @@
     100% { transform: rotate(360deg); }
   }
   
+  .ul-css{
+    list-style-type: circle;
+  }
+
+  .ul-css::marker{
+    color : black;
+  }

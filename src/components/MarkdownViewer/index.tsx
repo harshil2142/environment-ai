@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 
 const MarkdownViewer = ({ content }: any) => {
   return (
-    <ReactMarkdown className="prose" remarkPlugins={[remarkGfm]}>
+    <ReactMarkdown className="prose ul-css" remarkPlugins={[remarkGfm]}>
       {content}
     </ReactMarkdown>
   );
