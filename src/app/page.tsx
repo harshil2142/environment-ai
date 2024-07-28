@@ -53,6 +53,7 @@ const App: React.FC = () => {
   const [promptListState, setPromptListState] = useState<any>([]);
   const [historyState, setHistoryState] = useState<any>([]);
   const [activeHistory, setActiveHistory] = useState<any>(undefined);
+  const [pdfData, setPdfData] = useState([]);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -91,7 +92,7 @@ const App: React.FC = () => {
       if (totalFiles === pdfNameArr.length && pdfNameArr.length > 0) {
         const res = await postRequest({
           url: "/history/get-summury",
-          data: { pdfUrl: pdfNameArr },
+          data: { pdfData: pdfData.map((item: any) => Object.values(item)[0]) },
         });
         updatePdfName(res?.data?.pdf_name);
       }
@@ -192,7 +193,7 @@ const App: React.FC = () => {
       }
     }
   };
-  console.log(promptListState, "state")
+  console.log(promptListState, "state");
   const logoutHndler = () => {
     cookies.remove("token");
     cookies.remove("userId");
@@ -204,6 +205,7 @@ const App: React.FC = () => {
       setTotalFiles((prev) => prev + 1);
     }
   };
+  console.log(pdfData);
 
   return (
     <>
@@ -215,7 +217,9 @@ const App: React.FC = () => {
             <div>
               <div>
                 <Image
-                  src={"https://lirp.cdn-website.com/3f447af7/import/clib/ecowb_org/dms3rep/multi/opt/XLarge-Logo-20e48cb7-469x154-1920w.png"}
+                  src={
+                    "https://lirp.cdn-website.com/3f447af7/import/clib/ecowb_org/dms3rep/multi/opt/XLarge-Logo-20e48cb7-469x154-1920w.png"
+                  }
                   alt="image"
                   height={"100"}
                   width={"100"}
@@ -292,7 +296,6 @@ const App: React.FC = () => {
                   <div className="text-xl font-bold">
                     Ecologistics without Boarders
                   </div>
-                 
                 </div>
                 <div
                   ref={chatContainerRef}
@@ -379,9 +382,7 @@ const App: React.FC = () => {
                     )}
                   </div>
                 </div>
-                <div className="mb-3 text-black ">
-                  Recommended Questions:
-                </div>
+                <div className="mb-3 text-black ">Recommended Questions:</div>
                 <div className="flex">
                   <div className="px-3 py-2 me-2 text-sm hover:bg-slate-200 bg-[#D9D9D9] text-black rounded-xl cursor-pointer">
                     Design style
@@ -405,7 +406,7 @@ const App: React.FC = () => {
                 {/* <div className="max-h-[25vh] overflow-y-auto text-base text-black">
                     {summaryState}
                   </div> */}
-                <div className="flex justify-center"> 
+                <div className="flex justify-center">
                   <FileUpload
                     setSummaryState={setSummaryState}
                     setPdfDataUrl={setPdfDataUrl}
@@ -415,6 +416,7 @@ const App: React.FC = () => {
                     setTotalFiles={setTotalFiles}
                     totalFiles={totalFiles}
                     pdfNameArr={pdfNameArr}
+                    setPdfData={setPdfData}
                   />
                 </div>
               </div>

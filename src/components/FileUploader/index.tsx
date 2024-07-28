@@ -52,6 +52,42 @@ const Index: React.FC<IndexProps> = ({
     return { abort };
   };
 
+  // const serverProcess: any = (
+  //   fieldName: string,
+  //   file: File,
+  //   metadata: Record<string, any>,
+  //   load: (fileId: string) => void,
+  //   abort: () => void
+  // ) => {
+  //   console.log("namee", file);
+  //   console.log("metadata", typeof file);
+
+  //   const fileName = file.name;
+  //   const contentType = file.type;
+  //   const params = {
+  //     ACL: acl,
+  //     Body: file,
+  //     Bucket: bucket,
+  //     ContentType: contentType,
+  //     Key: fileName,
+  //     Metadata: metadata,
+  //   };
+  //   console.log("params", params);
+  //   const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
+  //   s3.upload(params, (err: any) => {
+  //     if (err) {
+  //       console.log("error", err);
+  //       abort();
+  //     } else {
+  //       load(fileName);
+  //       {
+  //         onUploadComplete && onUploadComplete({ contentType, fileName });
+  //       }
+  //     }
+  //   });
+  //   return { abort };
+  // };
+
   const serverProcess: any = (
     fieldName: string,
     file: File,
@@ -59,62 +95,67 @@ const Index: React.FC<IndexProps> = ({
     load: (fileId: string) => void,
     abort: () => void
   ) => {
-    console.log("namee", fieldName);
+    console.log("File", file);
+    console.log("File name:", file.name);
+    console.log("File type:", file.type);
+    console.log("File size:", file.size, "bytes");
 
-    const fileName = file.name;
-    const contentType = file.type;
-    const params = {
-      ACL: acl,
-      Body: file,
-      Bucket: bucket,
-      ContentType: contentType,
-      Key: fileName,
-      Metadata: metadata,
-    };
-    console.log("params", params);
-    const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-    s3.upload(params, (err: any) => {
-      if (err) {
-        console.log("error", err);
-        abort();
-      } else {
-        load(fileName);
-        {
-          onUploadComplete && onUploadComplete({ contentType, fileName });
+    if (file.type === "application/pdf") {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          console.log(event.target);
+          const base64 = event.target.result.toString().split(",")[1];
+          console.log("PDF content in base64:");
+          console.log(base64);
+
+          load(file.name);
+          if (onUploadComplete) {
+            onUploadComplete({
+              contentType: file.type,
+              fileName: file.name,
+              data: base64,
+            });
+          }
+        } else {
+          console.error("Failed to read file");
+          abort();
         }
-      }
-    });
+      };
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        abort();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.error("Uploaded file is not a PDF");
+      abort();
+    }
+
     return { abort };
   };
 
-  const serverRevert = (uniqueFileId: any, load: any, abort: any) => {
-    const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-    const params = {
-      Bucket: bucket,
-      Key: uniqueFileId,
-    };
-    s3.deleteObject(params, (err) => {
-      if (err) abort();
-      else load();
-    });
-  };
+  // const serverRevert = (uniqueFileId: any, load: any, abort: any) => {
+  //   const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
+  //   const params = {
+  //     Bucket: bucket,
+  //     Key: uniqueFileId,
+  //   };
+  //   s3.deleteObject(params, (err) => {
+  //     if (err) abort();
+  //     else load();
+  //   });
+  // };
 
   const serverRemove = (error: any, { file: { name } }: any) => {
-    const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-    const params = {
-      Bucket: bucket,
-      Key: name,
-    };
-    s3.deleteObject(params, (err) => {
-      if (!err) {
-        {
-          onRemoveComplete && onRemoveComplete({ name });
-        }
-      } else {
-        console.log("error revert", err);
-        console.log(error);
+    if (!error) {
+      {
+        onRemoveComplete && onRemoveComplete({ name });
       }
-    });
+    } else {
+      console.log("error revert", error);
+      console.log(error);
+    }
   };
 
   return (
@@ -134,7 +175,7 @@ const Index: React.FC<IndexProps> = ({
         server={{
           load: serverLoad,
           process: serverProcess,
-          revert: serverRevert,
+          // revert: serverRevert,
         }}
       >
         {/* {existingFiles.map((f) => (
@@ -165,7 +206,11 @@ interface IndexProps {
     basename: any;
     extension: any;
   }) => any;
-  onUploadComplete?: (data: { contentType: string; fileName: string }) => void;
+  onUploadComplete?: (data: {
+    contentType: string;
+    fileName: string;
+    data: any;
+  }) => void;
   handleAddFile?: (error: any, file: any) => void;
   ref?: LegacyRef<FilePond> | undefined;
 }

@@ -9,6 +9,7 @@ import { stripSpecialCharacters } from "@/constants/constants";
 import generateS3FileUrl from "@/constants/s3-url-generate";
 import { Button } from "@/components/ui/button";
 import { getRequest, postRequest } from "@/services/api";
+import { useState } from "react";
 
 export default function FileUpload(props: any) {
   const formSchema = z.object({
@@ -48,8 +49,7 @@ export default function FileUpload(props: any) {
                 const timestamp = new Date().getTime();
                 const baseStripped = stripSpecialCharacters(basename);
                 const filename = `${baseStripped}${extension}`;
-                const s3urlname = `${process.env
-                  .NEXT_PUBLIC_AWS_S3_BUCKET!}/pdf/${timestamp}/${filename}`;
+                const s3urlname = `${timestamp}-${filename}`;
                 return s3urlname;
               }}
               acceptedFileTypes={["application/pdf"]}
@@ -58,46 +58,21 @@ export default function FileUpload(props: any) {
               onRemoveComplete={({ name }: { name: any }) => {
                 // Clear the image preview URL when removing the image
                 // setImagePreviewUrl(null);
-                // console.log("name", name);
-                props.setPdfNameArr((pre: any) => {
+                props.setPdfData((pre: any) => {
                   return pre.filter((item: any) => {
-                    return (
-                      item !==
-                      generateS3FileUrl({
-                        s3BucketName: process.env.NEXT_PUBLIC_AWS_S3_BUCKET!,
-                        s3KeyName: name,
-                      })
-                    );
+                    return Object.keys(item)[0] !== name;
                   });
                 });
                 props.setTotalFiles((pre: any) => Math.max(pre - 1, 0));
                 props.setPdfDataUrl(null);
                 return form.setValue("imageUrl", name);
               }}
-              onUploadComplete={async ({ fileName }) => {
-                let fileUrl = generateS3FileUrl({
-                  s3BucketName: process.env.NEXT_PUBLIC_AWS_S3_BUCKET!,
-                  s3KeyName: fileName,
+              onUploadComplete={async ({ fileName, data }) => {
+                props.setPdfData((pre: any) => {
+                  return [...pre, { [fileName]: data }];
                 });
-                
-                // Update the image preview URL
-                // setImagePreviewUrl(fileUrl);
-                // Set the image URL in the form
-                props.setPdfNameArr((pre: any) => {
-                  return [...pre, fileUrl];
-                });
-                // console.log(props.pdfNameArr?.length ,"total");
-                // console.log((props.totalFiles - 1),"total");
-                if(props.pdfNameArr?.length === (props.totalFiles - 1)){
-                  const updatedArr = [...props.pdfNameArr, fileUrl];
-                  // console.log(props.totalFiles,"totalFiles")
-                  // const res = await postRequest({
-                  //   url: "/history/get-summury",
-                  //   data: { pdfUrl: updatedArr },
-                  // });
-                  // props.updatePdfName(res?.data?.pdf_name)
-                }
-                return form.setValue("imageUrl", fileUrl);
+
+                return form.setValue("imageUrl", fileName);
               }}
               handleAddFile={props.handleAddFile}
             />
