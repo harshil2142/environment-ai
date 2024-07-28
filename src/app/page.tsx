@@ -90,7 +90,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const func = async () => {
-      if (totalFiles === pdfNameArr.length && pdfNameArr.length > 0) {
+      if (totalFiles === pdfData.length && pdfData.length > 0) {
         const res = await postRequest({
           url: "/history/get-summury",
           data: { pdfData: pdfData.map((item: any) => Object.values(item)[0]) },
@@ -99,7 +99,7 @@ const App: React.FC = () => {
       }
     };
     func();
-  }, [totalFiles, pdfNameArr]);
+  }, [totalFiles, pdfData]);
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -266,9 +266,9 @@ const App: React.FC = () => {
             <div className="w-full p-4 flex flex-col justify-between bg-[#F6F6F6] h-screen ">
               <div>
                 <div className="flex mb-3 justify-between items-center ">
-                  <div className="text-xl font-bold">
-                    Ecologistics without Boarders ({" "}
-                    {isAdmin ? "Admin User" : "Normal User"} )
+                  <div className="text-xl font-bold flex">
+                    Ecologistics without Boarders <div className="text-green-800"> (
+                    {isAdmin ? "Admin User" : "Normal User"} ) </div>
                   </div>
                 </div>
                 <div
