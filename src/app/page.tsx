@@ -240,43 +240,20 @@ const App: React.FC = () => {
                 RECENT CHATS <hr className="ms-[2%] w-[40%]" />
               </div>
               <div className="overflow-y-auto h-[50vh]">
-                {historyState?.map((item: any, index: number) => (
                   <div
-                    key={index}
-                    className="w-[90%] border-2 border-gray-300 rounded-xl h-10 mt-3 flex justify-center hover:bg-slate-50 items-center cursor-pointer bg-[#DFE1E6] text-black truncate"
+                    className="w-[90%] border-2 border-gray-300 rounded-xl h-10 mt-3 flex justify-center hover:bg-slate-50 items-center bg-[#DFE1E6] text-black truncate"
                     title={
-                      Array.isArray(historyState) &&
-                      historyState.length > 0 &&
-                      (historyState[index]?.history[0]?.pdfName || "")
+                      pdfName || ""
                     }
-                    onClick={() => {
-                      setHistoryHndler(index);
-                    }}
                   >
-                    {/* {item?.summary} */}
-                    <span className="mx-2">
-                      {" "}
-                      {Array.isArray(historyState) &&
-                        historyState.length > 0 &&
-                        (historyState[index]?.history[0]?.pdfName || "")}
+                    <span className="px-2">
+                      {pdfName || ""}
                     </span>
                   </div>
-                ))}
               </div>
             </div>
             <div>
-              {/* <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
-                      <i className="ri-delete-bin-line text-[#666D80] me-3 text-lg"></i>
-                      Clear all conversations
-                    </div> */}
-              <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
-                <i className="ri-upload-2-line text-[#666D80] me-3 text-lg"></i>
-                Upgrade to plus
-              </div>
-              <div className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2">
-                <i className="ri-settings-5-line text-[#666D80] me-3 text-lg"></i>
-                Setting
-              </div>
+             
               <div
                 className="w-full h-10 rounded-2xl mt-2 flex justify-start items-center cursor-pointer hover:bg-slate-100 px-2"
                 onClick={logoutHndler}
@@ -291,7 +268,7 @@ const App: React.FC = () => {
               <div>
                 <div className="flex mb-3 justify-between items-center ">
                   <div className="text-xl font-bold">
-                    Ecologistics without Boarders
+                    Ecologistics without Boarders ( {isAdmin ? "Admin User" : "Normal User"} )
                   </div>
                  
                 </div>
@@ -380,20 +357,8 @@ const App: React.FC = () => {
                     )}
                   </div>
                 </div>
-                <div className="mb-3 text-black ">
-                  Recommended Questions:
-                </div>
-                <div className="flex">
-                  <div className="px-3 py-2 me-2 text-sm hover:bg-slate-200 bg-[#D9D9D9] text-black rounded-xl cursor-pointer">
-                    Design style
-                  </div>
-                  <div className="px-3 py-2 me-2 text-sm bg-[#D9D9D9] hover:bg-slate-200 text-black rounded-xl cursor-pointer">
-                    Change furniture or color
-                  </div>
-                  <div className="px-3 py-2 text-sm bg-[#D9D9D9] hover:bg-slate-200 text-black rounded-xl cursor-pointer">
-                    Design uploaded picture
-                  </div>
-                </div>
+               
+               
               </div>
             </div>
           </div>
