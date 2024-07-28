@@ -50,6 +50,7 @@ const App: React.FC = () => {
   const [totalFiles, setTotalFiles] = useState<number>(0);
   const [summaryState, setSummaryState] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const [text, setText] = useState<any>("");
   const [promptListState, setPromptListState] = useState<any>([]);
   const [historyState, setHistoryState] = useState<any>([]);
@@ -91,11 +92,17 @@ const App: React.FC = () => {
   useEffect(() => {
     const func = async () => {
       if (totalFiles === pdfData.length && pdfData.length > 0) {
+        setPdfLoading(true)
         const res = await postRequest({
           url: "/history/get-summury",
           data: { pdfData: pdfData.map((item: any) => Object.values(item)[0]) },
         });
-        updatePdfName(res?.data?.pdf_name);
+        if(res){
+          setPdfLoading(false)
+          updatePdfName(res?.data?.pdf_name);
+        }else{
+          setPdfLoading(false)
+        }
       }
     };
     func();
@@ -275,7 +282,7 @@ const App: React.FC = () => {
                   ref={chatContainerRef}
                   className={`my-3 p-3 h-[70vh] rounded-2xl flex flex-col overflow-y-auto `}
                 >
-                  {(promptListState || [])?.map((item: any, index: any) => (
+                 {pdfLoading ?  <Loader className="m-auto h-14 w-14" /> : (promptListState || [])?.map((item: any, index: any) => (
                     <>
                       <div className="flex flex-col relative z-10">
                         <div className="flex">
@@ -331,7 +338,7 @@ const App: React.FC = () => {
                         </div>
                       </div>
                     </>
-                  ))}
+                  )) } 
                   <div ref={bottomRef}></div>
                 </div>
               </div>
@@ -340,6 +347,7 @@ const App: React.FC = () => {
                   <input
                     type="text"
                     value={text}
+                    disabled={pdfLoading}
                     onChange={(e: any) => setText(e.target.value)}
                     className="w-full py-2 pl-4 pr-10 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm "
                     placeholder="Message Environment AI..."
